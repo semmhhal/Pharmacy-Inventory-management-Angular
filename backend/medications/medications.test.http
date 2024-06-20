@@ -1,0 +1,135 @@
+# @name login
+POST http://localhost:3000/users/signin
+Content-Type: application/json
+
+{"email": "asaad@miu.edu", "password": "123456"}
+
+###
+@authToken = {{login.response.body.data}}
+###
+POST http://localhost:3000/medications
+Content-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW
+Authorization: Bearer {{authToken}}
+
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="name"
+
+Acetaminophen
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="generic_name"
+
+acetaminophen (oral)
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="medication_class"
+
+Miscellaneous analgesics
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="availability"
+
+OTC
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="medication_image"; filename="image.png"
+Content-Type: image/png
+
+< ./image.jpg
+------WebKitFormBoundary7MA4YWxkTrZu0gW--
+###
+{
+    "name": "Acetaminophen",
+    "generic_name":"acetaminophen (oral)",
+    "medication_class":"Miscellaneous analgesics",
+    "availability": "OTC"
+}
+###
+
+GET http://localhost:3000/medications?first_letter=A
+###
+
+GET http://localhost:3000/medications/6553c1f160d95c7bea24f667
+###
+
+DELETE http://localhost:3000/medications/6553beb0827117e5e021854a
+Authorization: Bearer {{authToken}}
+###
+PUT http://localhost:3000/medications/655395d592e2a55a63837a75
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+    "name": "Bcetaminophen",
+    "generic_name":"bcetaminophen (oral)",
+    "medication_class":"Miscellaneous analgesics soft",
+    "availability": "OTC"
+}
+###
+POST http://localhost:3000/medications/655395d592e2a55a63837a75/reviews
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+    "review": "Helps me with migraine",
+    "rating": 9
+}
+
+###
+GET http://localhost:3000/medications/655395d592e2a55a63837a75/reviews
+
+###
+GET http://localhost:3000/medications/655395d592e2a55a63837a75/reviews/6553968092e2a55a63837a7a
+
+###
+DELETE http://localhost:3000/medications/655395d592e2a55a63837a75/reviews/6553963492e2a55a63837a77
+Authorization: Bearer {{authToken}}
+
+###
+PUT http://localhost:3000/medications/655395d592e2a55a63837a75/reviews/6553ba5c19f31860db02e6d1
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+    "review": "Helps me with migraine, highly recommended",
+    "rating": 10
+}
+###
+POST http://localhost:3000/medications/6489dc3161bbd3c35737c5fe/transactions
+Authorization: Bearer {{authToken}}
+Content-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW
+
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="title"
+
+Breakfast
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="description"
+
+Cafe at the beach
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="category"
+
+Food
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="amount"
+
+75
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="date"
+
+1686697814
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="medication_image"; filename="image.png"
+Content-Type: image/png
+
+< ./image.jpg
+------WebKitFormBoundary7MA4YWxkTrZu0gW--
+
+###
+GET http://localhost:3000/medications/6489dc3161bbd3c35737c5fe/transactions/
+Authorization: Bearer {{authToken}}
+
+###
+GET http://localhost:3000/medications/6489dc3161bbd3c35737c5fe/transactions/6489dd9b61bbd3c35737c60c
+Authorization: Bearer {{authToken}}
+
+
+###
+GET http://localhost:3000/images/9cc077d956d527c9ec1440f6d8d69a18
