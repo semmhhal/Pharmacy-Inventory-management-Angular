@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 
@@ -33,7 +33,7 @@ import { MatIcon } from '@angular/material/icon';
           <mat-icon>home</mat-icon>
         </button>
       </div>
-      <form [formGroup]="form" (ngSubmit)="Addreview()">
+      <form [formGroup]="form">
         <div align="center">
           <mat-form-field>
             <mat-label class="all-font">Enter your Review</mat-label>
@@ -45,12 +45,25 @@ import { MatIcon } from '@angular/material/icon';
             />
           </mat-form-field>
           <div>
-            <mat-form-field>
-              <mat-label class="all-font">Enter Rating</mat-label>
-              <input matInput formControlName="rating" required />
-            </mat-form-field>
+            <input
+              style="display:none"
+              matInput
+              formControlName="rating"
+              required
+            />
+
+            @for(num of [1,2,3,4,5]; track $index){ @if(StarVal() <= num){
+            <button (click)="givenStar($index)" class="Starbutton">
+              <mat-icon fontIcon="star" style="color: grey;"></mat-icon>
+            </button>
+            }@else{
+            <button (click)="givenStar($index)" class="Starbutton">
+              <mat-icon fontIcon="star" style="color: gold;"></mat-icon>
+            </button>
+            } }
           </div>
           <button
+            (click)="Addreview()"
             mat-flat-button
             type="submit"
             [disabled]="form.invalid"
@@ -68,11 +81,18 @@ export class AddReviewComponent {
   readonly #reviewService = inject(ReviewService);
   readonly #notification = inject(ToastrService);
   readonly #router = inject(Router);
+  StarVal = signal<number>(0);
   med_info = this.#router.getCurrentNavigation()?.extras.state as Medication;
   form = inject(FormBuilder).nonNullable.group({
     review: ['', Validators.required],
-    rating: 5,
+
+    rating: [0, Validators.min(1)],
   });
+
+  givenStar(num: number) {
+    this.StarVal.set(num + 2);
+    this.form.controls.rating.setValue(this.StarVal() - 1);
+  }
 
   Addreview() {
     this.#reviewService

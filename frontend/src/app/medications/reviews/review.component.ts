@@ -41,7 +41,15 @@ import { MatIconModule } from '@angular/material/icon';
 
         <mat-card-content>
           <mat-card-subtitle>{{ $singleReview().review }}</mat-card-subtitle>
-          <p>rating:{{ $singleReview().rating }}</p>
+          <p>
+            @for(num of [1,2,3,4,5]; track $index) { @if($singleReview().rating
+            < num){
+
+            <mat-icon fontIcon="star" style="color: grey;"></mat-icon>
+            }@else{
+
+            <mat-icon fontIcon="star" style="color: gold;"></mat-icon>}}
+          </p>
 
           <p>{{ $singleReview().date | date }}</p>
           @if($singleReview().by.user_id === userService.$state()._id ){

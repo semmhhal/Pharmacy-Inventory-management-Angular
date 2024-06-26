@@ -1,4 +1,4 @@
-import { Component, effect, inject, input } from '@angular/core';
+import { Component, effect, inject, input, signal } from '@angular/core';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatButtonModule } from '@angular/material/button';
@@ -9,6 +9,7 @@ import { UserService } from '../../users/user.service';
 import { Router } from '@angular/router';
 import { ReviewService } from './review.service';
 import { Review } from '../medication.types';
+import { MatIcon, MatIconModule } from '@angular/material/icon';
 @Component({
   selector: 'app-updatereviews',
   standalone: true,
@@ -18,9 +19,10 @@ import { Review } from '../medication.types';
     MatInputModule,
     MatFormFieldModule,
     NgStyle,
+    MatIcon,
   ],
   template: ` <div [ngStyle]="{ 'padding-top': '40px' }">
-    <form [formGroup]="form" (ngSubmit)="Updatereview()">
+    <form [formGroup]="form">
       <div align="center">
         <mat-form-field>
           <mat-label class="all-font">Enter your Review</mat-label>
@@ -32,12 +34,25 @@ import { Review } from '../medication.types';
           />
         </mat-form-field>
         <div>
-          <mat-form-field>
-            <mat-label class="all-font">Enter Rating</mat-label>
-            <input matInput formControlName="rating" required />
-          </mat-form-field>
+          <input
+            style="display:none"
+            matInput
+            formControlName="rating"
+            required
+          />
+
+          @for(num of [1,2,3,4,5]; track $index){ @if(StarVal() <= num){
+          <button (click)="givenStar($index)" class="Starbutton">
+            <mat-icon fontIcon="star" style="color: grey;"></mat-icon>
+          </button>
+          }@else{
+          <button (click)="givenStar($index)" class="Starbutton">
+            <mat-icon fontIcon="star" style="color: gold;"></mat-icon>
+          </button>
+          } }
         </div>
         <button
+          (click)="Updatereview()"
           mat-flat-button
           type="submit"
           [disabled]="form.invalid"
@@ -54,11 +69,12 @@ export class UpdatereviewsComponent {
   readonly #router = inject(Router);
   readonly #reviewService = inject(ReviewService);
   readonly #notification = inject(ToastrService);
+  StarVal = signal<number>(0);
   medication_id = input<string>('');
   review_id = input<string>('');
   form = inject(FormBuilder).nonNullable.group({
     review: ['', Validators.required],
-    rating: 5,
+    rating: [0, Validators.min(1)],
   });
 
   constructor() {
@@ -69,10 +85,16 @@ export class UpdatereviewsComponent {
           .subscribe((response) => {
             if (response.success) {
               this.form.patchValue(response.data);
+              this.StarVal.set(response.data.rating + 1);
             }
           });
       }
     });
+  }
+
+  givenStar(num: number) {
+    this.StarVal.set(num + 2);
+    this.form.controls.rating.setValue(this.StarVal() - 1);
   }
 
   Updatereview() {
