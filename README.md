@@ -9,4 +9,4 @@ The application helps users to review and report medications side effects.
 - Implement proper lazy-loading techniques for the user-protected components.
 - Projects used Angular Material and have proper UI that complies with the web standards. Other UI kits are not permitted.
 - Used the latest Angular version features.
-- used the `ReactiveFormsModule` when working with form elements (data-driven). The `FormsModule` (template-driven) should not be used.
+- Used the `ReactiveFormsModule` when working with form elements (data-driven). The `FormsModule` (template-driven) should not be used.
